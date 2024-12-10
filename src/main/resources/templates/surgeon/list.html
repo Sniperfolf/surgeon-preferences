@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Surgeons List</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container">
+    <a class="navbar-brand" href="/">Surgeon Preferences</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="/surgeons">Surgeons</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/surgeons/form">Add Surgeon</a>
+        </li>
+      </ul>
+      <form th:action="@{/logout}" method="post" class="d-flex">
+        <button class="btn btn-outline-light" type="submit">Logout</button>
+      </form>
+    </div>
+  </div>
+</nav>
+
+<div class="container mt-4">
+  <div class="row mb-4">
+    <div class="col-md-6">
+      <h2>Surgeons</h2>
+    </div>
+    <div class="col-md-6">
+      <form class="d-flex" th:action="@{/surgeons}" method="get">
+        <input class="form-control me-2" type="search"
+               placeholder="Search by last name" name="search"
+               th:value="${param.search}">
+        <button class="btn btn-outline-primary" type="submit">Search</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="table-responsive">
+    <table class="table table-striped">
+      <thead>
+      <tr>
+        <th>Name</th>
+        <th>Specialty</th>
+        <th>Actions</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="surgeon : ${surgeons}">
+        <td>
+          <a th:href="@{/surgeons/{id}(id=${surgeon.id})}"
+             th:text="${surgeon.firstName + ' ' + surgeon.lastName}">
+            John Doe
+          </a>
+        </td>
+        <td th:text="${surgeon.specialty}">Cardiology</td>
+        <td>
+          <a th:href="@{/surgeons/{id}/preferences(id=${surgeon.id})}"
+             class="btn btn-sm btn-info">Preference Cards</a>
+          <a th:href="@{/surgeons/edit/{id}(id=${surgeon.id})}"
+             class="btn btn-sm btn-primary">Edit</a>
+          <form th:action="@{/surgeons/delete/{id}(id=${surgeon.id})}"
+                method="post" class="d-inline">
+            <button type="submit" class="btn btn-sm btn-danger"
+                    onclick="return confirm('Are you sure?')">Delete</button>
+          </form>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <a href="/surgeons/form" class="btn btn-success">Add New Surgeon</a>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

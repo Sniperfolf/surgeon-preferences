@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Preference Card Form</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-4">
+  <h2 th:text="${preferenceCard.id} ? 'Edit Preference Card' : 'New Preference Card'">Preference Card Form</h2>
+  <h4 class="mb-4" th:text="${surgeon.firstName + ' ' + surgeon.lastName}">Surgeon Name</h4>
+
+  <form th:action="@{/surgeons/{id}/preferences/save(id=${surgeon.id})}"
+        th:object="${preferenceCard}" method="post">
+    <input type="hidden" th:field="*{id}" />
+
+    <div class="mb-3">
+      <label for="procedureName" class="form-label">Procedure Name</label>
+      <input type="text" class="form-control" id="procedureName"
+             th:field="*{procedureName}" required>
+    </div>
+
+    <div class="mb-3">
+      <label for="gloveSize" class="form-label">Glove Size</label>
+      <input type="text" class="form-control" id="gloveSize"
+             th:field="*{gloveSize}">
+    </div>
+
+    <div class="mb-3">
+      <label for="instruments" class="form-label">Instruments</label>
+      <textarea class="form-control" id="instruments" rows="4"
+                th:field="*{instruments}"></textarea>
+    </div>
+
+    <div class="mb-3">
+      <label for="sutures" class="form-label">Sutures</label>
+      <textarea class="form-control" id="sutures" rows="3"
+                th:field="*{sutures}"></textarea>
+    </div>
+
+    <div class="mb-3">
+      <label for="notes" class="form-label">Notes</label>
+      <textarea class="form-control" id="notes" rows="4"
+                th:field="*{notes}"></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a th:href="@{/surgeons/{id}/preferences(id=${surgeon.id})}"
+       class="btn btn-secondary">Cancel</a>
+  </form>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Preference Cards</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-4">
+    <h2>Preference Cards for <span th:text="${surgeon.firstName + ' ' + surgeon.lastName}"></span></h2>
+
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <form class="d-flex" th:action="@{/surgeons/{id}/preferences(id=${surgeon.id})}" method="get">
+                <input class="form-control me-2" type="search"
+                       placeholder="Search by procedure" name="search"
+                       th:value="${param.search}">
+                <button class="btn btn-outline-primary" type="submit">Search</button>
+            </form>
+        </div>
+        <div class="col-md-6 text-end">
+            <a th:href="@{/surgeons/{id}/preferences/new(id=${surgeon.id})}"
+               class="btn btn-primary">Add New Preference Card</a>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Procedure</th>
+                <th>Last Updated</th>
+                <th>Actions</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="card : ${preferenceCards}">
+                <td>
+                    <a th:href="@{/surgeons/{surgeonId}/preferences/{id}(surgeonId=${surgeon.id},id=${card.id})}"
+                       th:text="${card.procedureName}">Procedure</a>
+                </td>
+                <td th:text="${#temporals.format(card.lastUpdated, 'MM/dd/yyyy HH:mm')}">Date</td>
+                <td>
+                    <a th:href="@{/surgeons/{surgeonId}/preferences/{id}/edit(surgeonId=${surgeon.id},id=${card.id})}"
+                       class="btn btn-sm btn-primary">Edit</a>
+                    <form th:action="@{/surgeons/{surgeonId}/preferences/{id}/delete(surgeonId=${surgeon.id},id=${card.id})}"
+                          method="post" class="d-inline">
+                        <button type="submit" class="btn btn-sm btn-danger"
+                                onclick="return confirm('Are you sure?')">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(preferenceCards)}">
+                <td colspan="3" class="text-center">No preference cards found</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <a th:href="@{/surgeons}" class="btn btn-secondary">Back to Surgeons</a>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
