@@ -2,12 +2,15 @@ package com.iodine.surgeon_preferences.controller;
 
 import com.iodine.surgeon_preferences.model.Surgeon;
 import com.iodine.surgeon_preferences.service.SurgeonService;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 
 @Controller
 @RequestMapping("/surgeons")
@@ -64,5 +67,17 @@ public class SurgeonController {
     public String deleteSurgeon(@PathVariable Long id) {
         surgeonService.deleteSurgeon(id);
         return "redirect:/surgeons";
+    }
+    @GetMapping("/export/pdf")
+    public void exportPDF(HttpServletResponse response) throws IOException {
+        response.setContentType("application/pdf");
+        response.setHeader("Content-Disposition", "attachment; filename=surgeons.pdf");
+        surgeonService.generatePdfReport(response.getOutputStream());
+    }
+    @GetMapping("/export/excel")
+    public void exportExcel(HttpServletResponse response) throws IOException {
+        response.setContentType("application/vnd.ms-excel");
+        response.setHeader("Content-Disposition", "attachment; filename=surgeons.xlsx");
+        surgeonService.generateExcelReport(response.getOutputStream());
     }
 }

@@ -5,6 +5,8 @@ import com.iodine.surgeon_preferences.repository.SurgeonRepository;
 import com.iodine.surgeon_preferences.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.io.OutputStream;
 import java.util.List;
 
 @Service
@@ -35,5 +37,14 @@ public class SurgeonService {
             throw new ResourceNotFoundException("Surgeon not found with id: " + id);
         }
         surgeonRepository.deleteById(id);
+    }
+    public void generatePdfReport(OutputStream outputStream) {
+        // Implementation for PDF generation
+        // You might want to use a library like iText or Apache PDFBox
+    }
+
+    public void generateExcelReport(OutputStream outputStream) {
+        // Implementation for Excel generation
+        // You might want to use Apache POI
     }
 }
