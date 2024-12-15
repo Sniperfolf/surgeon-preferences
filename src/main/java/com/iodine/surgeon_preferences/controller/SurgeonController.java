@@ -1,5 +1,6 @@
 package com.iodine.surgeon_preferences.controller;
 
+import com.iodine.surgeon_preferences.exception.SurgeonDeleteException;
 import com.iodine.surgeon_preferences.model.Surgeon;
 import com.iodine.surgeon_preferences.service.SurgeonService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 
@@ -50,10 +52,11 @@ public class SurgeonController {
         return "redirect:/surgeons";
     }
 
-    @GetMapping("/edit/{id}")
+    @GetMapping("/{id}/edit")
     public String showEditForm(@PathVariable Long id, Model model) {
-        model.addAttribute("surgeon", surgeonService.getSurgeonById(id));
-        return "surgeon/form";
+        Surgeon surgeon = surgeonService.getSurgeonById(id);
+        model.addAttribute("surgeon", surgeon);
+        return "surgeon/form"; // Using the same form for create and edit
     }
 
     @GetMapping("/{id}")
@@ -63,9 +66,14 @@ public class SurgeonController {
         return "surgeon/view";
     }
 
-    @PostMapping("/delete/{id}")
-    public String deleteSurgeon(@PathVariable Long id) {
-        surgeonService.deleteSurgeon(id);
+    @PostMapping("/{id}/delete")
+    public String deleteSurgeon(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            surgeonService.deleteSurgeon(id);
+            redirectAttributes.addFlashAttribute("successMessage", "Surgeon successfully deleted.");
+        } catch (SurgeonDeleteException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        }
         return "redirect:/surgeons";
     }
     @GetMapping("/export/pdf")
