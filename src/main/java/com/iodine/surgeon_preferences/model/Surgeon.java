@@ -26,6 +26,17 @@ public class Surgeon {
 
     @OneToMany(mappedBy = "surgeon", cascade = CascadeType.ALL)
     private List<PreferenceCard> preferenceCards;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User createdBy;
+
+    public User getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(User createdBy) {
+        this.createdBy = createdBy;
+    }
 
     public Long getId() {
         return this.id;

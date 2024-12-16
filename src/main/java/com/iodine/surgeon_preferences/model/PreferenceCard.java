@@ -31,8 +31,20 @@ public class PreferenceCard {
     private LocalDateTime lastUpdated;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "surgeon_id", nullable = false)
+    @JoinColumn(name = "surgeon_id")
     private Surgeon surgeon;
+
+    public User getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(User createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User createdBy;
 
     @PrePersist
     @PreUpdate

@@ -2,11 +2,14 @@ package com.iodine.surgeon_preferences.service;
 
 
 import com.iodine.surgeon_preferences.model.PreferenceCard;
+import com.iodine.surgeon_preferences.model.User;
 import com.iodine.surgeon_preferences.repository.PreferenceCardRepository;
 import com.iodine.surgeon_preferences.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import java.util.List;
+
 
 @Service
 public class PreferenceCardService {
@@ -14,27 +17,44 @@ public class PreferenceCardService {
     @Autowired
     private PreferenceCardRepository preferenceCardRepository;
 
+    @Autowired
+    private UserService userService;
+
     public List<PreferenceCard> getPreferenceCardsBySurgeon(Long surgeonId) {
-        return preferenceCardRepository.findBySurgeonId(surgeonId);
+        User currentUser = getCurrentUser();
+        return preferenceCardRepository.findBySurgeonIdAndCreatedBy(surgeonId, currentUser);
+    }
+
+    public PreferenceCard savePreferenceCard(PreferenceCard card) {
+        card.setCreatedBy(getCurrentUser());
+        return preferenceCardRepository.save(card);
     }
 
     public PreferenceCard getPreferenceCardById(Long id) {
-        return preferenceCardRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Preference card not found with id: " + id));
+        User currentUser = getCurrentUser();
+        return preferenceCardRepository.findByIdAndCreatedBy(id, currentUser)
+                .orElseThrow(() -> new ResourceNotFoundException("Preference card not found or access denied"));
     }
 
-    public PreferenceCard savePreferenceCard(PreferenceCard preferenceCard) {
-        return preferenceCardRepository.save(preferenceCard);
+    public List<PreferenceCard> searchPreferenceCards(Long surgeonId, String searchTerm) {
+        User currentUser = getCurrentUser();
+        if (searchTerm != null && !searchTerm.isEmpty()) {
+            return preferenceCardRepository.findBySurgeonIdAndCreatedByAndProcedureNameContainingIgnoreCase(
+                    surgeonId, currentUser, searchTerm);
+        }
+        return preferenceCardRepository.findBySurgeonIdAndCreatedBy(surgeonId, currentUser);
     }
 
     public void deletePreferenceCard(Long id) {
-        preferenceCardRepository.deleteById(id);
+        User currentUser = getCurrentUser();
+        PreferenceCard card = preferenceCardRepository.findByIdAndCreatedBy(id, currentUser)
+                .orElseThrow(() -> new ResourceNotFoundException("Preference card not found or access denied"));
+
+        preferenceCardRepository.delete(card);
     }
 
-    public List<PreferenceCard> searchPreferenceCards(Long surgeonId, String procedureName) {
-        if (procedureName != null && !procedureName.isEmpty()) {
-            return preferenceCardRepository.findBySurgeonIdAndProcedureNameContainingIgnoreCase(surgeonId, procedureName);
-        }
-        return preferenceCardRepository.findBySurgeonId(surgeonId);
+    private User getCurrentUser() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userService.getUserByUsername(username);
     }
 }

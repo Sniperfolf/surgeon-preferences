@@ -1,11 +1,12 @@
 package com.iodine.surgeon_preferences.service;
 
-import com.iodine.surgeon_preferences.exception.SurgeonDeleteException;
-import com.iodine.surgeon_preferences.model.Surgeon;
-import com.iodine.surgeon_preferences.repository.SurgeonRepository;
+
 import com.iodine.surgeon_preferences.exception.ResourceNotFoundException;
-import jakarta.transaction.Transactional;
+import com.iodine.surgeon_preferences.model.Surgeon;
+import com.iodine.surgeon_preferences.model.User;
+import com.iodine.surgeon_preferences.repository.SurgeonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.io.OutputStream;
@@ -17,43 +18,71 @@ public class SurgeonService {
     @Autowired
     private SurgeonRepository surgeonRepository;
 
+    @Autowired
+    private UserService userService;
+
+
+
     public List<Surgeon> getAllSurgeons() {
-        return surgeonRepository.findAll();
+        User currentUser = getCurrentUser();
+        if (currentUser.isAdmin()) {
+            return surgeonRepository.findAll();
+        }
+        return surgeonRepository.findByCreatedBy(currentUser);
+    }
+    public List<Surgeon> getSurgeonsByUser(User user) {
+        if (user.isAdmin()) {
+            return surgeonRepository.findAll();
+        }
+        return surgeonRepository.findByCreatedBy(user);
     }
 
     public Surgeon getSurgeonById(Long id) {
-        return surgeonRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Surgeon not found with id: " + id));
-    }
-
-    public List<Surgeon> searchSurgeons(String lastName) {
-        return surgeonRepository.findByLastNameContainingIgnoreCase(lastName);
-    }
-    @Transactional
-    public void deleteSurgeon(Long id) {
-        Surgeon surgeon = surgeonRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Surgeon not found with id: " + id));
-
-        if (surgeon.getPreferenceCards() != null && !surgeon.getPreferenceCards().isEmpty()) {
-            throw new SurgeonDeleteException("Cannot delete surgeon with existing preference cards. Please delete all preference cards first.");
+        User currentUser = getCurrentUser();
+        if (currentUser.isAdmin()) {
+            return surgeonRepository.findById(id)
+                    .orElseThrow(() -> new ResourceNotFoundException("Surgeon not found"));
         }
-
-        surgeonRepository.deleteById(id);
+        return surgeonRepository.findByIdAndCreatedBy(id, currentUser)
+                .orElseThrow(() -> new ResourceNotFoundException("Surgeon not found or access denied"));
     }
 
+    public List<Surgeon> searchSurgeons(String searchTerm) {
+        User currentUser = getCurrentUser();
+        if (currentUser.isAdmin()) {
+            if (searchTerm != null && !searchTerm.isEmpty()) {
+                return surgeonRepository.findByLastNameContainingIgnoreCase(searchTerm);
+            }
+            return surgeonRepository.findAll();
+        }
+        if (searchTerm != null && !searchTerm.isEmpty()) {
+            return surgeonRepository.findByCreatedByAndLastNameContainingIgnoreCase(currentUser, searchTerm);
+        }
+        return surgeonRepository.findByCreatedBy(currentUser);
+    }
 
     public Surgeon saveSurgeon(Surgeon surgeon) {
+        surgeon.setCreatedBy(getCurrentUser());
         return surgeonRepository.save(surgeon);
     }
 
+    public void deleteSurgeon(Long id) {
+        Surgeon surgeon = getSurgeonById(id); // This will check user access
+        if (!surgeon.getPreferenceCards().isEmpty()) {
+            throw new RuntimeException("Cannot delete surgeon with existing preference cards");
+        }
+        surgeonRepository.delete(surgeon);
+    }
 
+    private User getCurrentUser() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userService.getUserByUsername(username);
+    }
     public void generatePdfReport(OutputStream outputStream) {
-        // Implementation for PDF generation
-        // You might want to use a library like iText or Apache PDFBox
+        //Future me problem to deal with
     }
 
     public void generateExcelReport(OutputStream outputStream) {
-        // Implementation for Excel generation
-        // You might want to use Apache POI
+
     }
 }

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>User Details</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/admin/users">Admin Dashboard</a></li>
+            <li class="breadcrumb-item active" th:text="${user.username}">Username</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">User Information</h5>
+                </div>
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-sm-4">Username:</dt>
+                        <dd class="col-sm-8" th:text="${user.username}">username</dd>
+
+                        <dt class="col-sm-4">Email:</dt>
+                        <dd class="col-sm-8" th:text="${user.email}">email@example.com</dd>
+
+                        <dt class="col-sm-4">Roles:</dt>
+                        <dd class="col-sm-8">
+                                <span th:each="role : ${user.roles}"
+                                      th:text="${role.name}"
+                                      class="badge bg-primary me-1">ROLE</span>
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">User's Surgeons</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Specialty</th>
+                                <th>Preference Cards</th>
+                                <th>Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="surgeon : ${surgeons}">
+                                <td th:text="${surgeon.firstName + ' ' + surgeon.lastName}">John Doe</td>
+                                <td th:text="${surgeon.specialty}">Specialty</td>
+                                <td th:text="${surgeon.preferenceCards.size()}">0</td>
+                                <td>
+                                    <a th:href="@{/surgeons/{id}(id=${surgeon.id})}"
+                                       class="btn btn-sm btn-info">View</a>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(surgeons)}">
+                                <td colspan="4" class="text-center">No surgeons found</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Activity Log</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            <strong>Last Login:</strong>
+                            <span th:text="${#temporals.format(user.lastLogin, 'dd-MM-yyyy HH:mm')}">
+                                    01-01-2024 12:00
+                                </span>
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Total Surgeons:</strong>
+                            <span th:text="${surgeons.size()}">0</span>
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Total Preference Cards:</strong>
+                            <span th:text="${totalPreferenceCards}">0</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <a href="/admin/users" class="btn btn-secondary">Back to Users List</a>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
