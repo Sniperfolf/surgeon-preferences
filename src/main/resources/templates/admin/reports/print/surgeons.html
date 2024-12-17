@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Surgeons Report</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        @media print {
+            .no-print { display: none; }
+            .page-break { page-break-after: always; }
+        }
+    </style>
+</head>
+<body>
+<div class="container mt-4">
+    <div class="no-print mb-3">
+        <button onclick="window.print()" class="btn btn-primary">Print Report</button>
+        <a href="/admin/reports" class="btn btn-secondary">Back to Reports</a>
+    </div>
+
+    <h2>Surgeons Report</h2>
+    <p>Generated: <span th:text="${#temporals.format(#temporals.createNow(), 'MM/dd/yyyy HH:mm')}"></span></p>
+
+    <div th:each="surgeon : ${surgeons}" class="mb-4">
+        <h4 th:text="${surgeon.firstName + ' ' + surgeon.lastName}">Surgeon Name</h4>
+        <p><strong>Specialty:</strong> <span th:text="${surgeon.specialty}">Specialty</span></p>
+
+        <h5>Preference Cards:</h5>
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th>Procedure</th>
+                <th>Glove Size</th>
+                <th>Last Updated</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="card : ${surgeon.preferenceCards}">
+                <td th:text="${card.procedureName}">Procedure</td>
+                <td th:text="${card.gloveSize}">Size</td>
+                <td th:text="${#temporals.format(card.lastUpdated, 'MM/dd/yyyy')}">Date</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

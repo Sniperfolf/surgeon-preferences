@@ -24,6 +24,21 @@ public class PreferenceCardService {
         User currentUser = getCurrentUser();
         return preferenceCardRepository.findBySurgeonIdAndCreatedBy(surgeonId, currentUser);
     }
+    public PreferenceCard updatePreferenceCard(Long cardId, PreferenceCard updatedCard) {
+        PreferenceCard existingCard = preferenceCardRepository.findById(cardId)
+                .orElseThrow(() -> new RuntimeException("Preference card not found with id: " + cardId));
+
+        // Update the fields
+        existingCard.setProcedureName(updatedCard.getProcedureName());
+        existingCard.setGloveSize(updatedCard.getGloveSize());
+        existingCard.setInstruments(updatedCard.getInstruments());
+        existingCard.setSutures(updatedCard.getSutures());
+        existingCard.setNotes(updatedCard.getNotes());
+
+        // The @PreUpdate annotation will handle lastUpdated
+        return preferenceCardRepository.save(existingCard);
+    }
+
 
     public PreferenceCard savePreferenceCard(PreferenceCard card) {
         card.setCreatedBy(getCurrentUser());
@@ -35,6 +50,10 @@ public class PreferenceCardService {
         return preferenceCardRepository.findByIdAndCreatedBy(id, currentUser)
                 .orElseThrow(() -> new ResourceNotFoundException("Preference card not found or access denied"));
     }
+    public List<PreferenceCard> getAllPreferenceCards() {
+        return preferenceCardRepository.findAll();
+    }
+
 
     public List<PreferenceCard> searchPreferenceCards(Long surgeonId, String searchTerm) {
         User currentUser = getCurrentUser();

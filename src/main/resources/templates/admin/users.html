@@ -35,13 +35,51 @@
                                                   class="badge bg-primary me-1">
                                             </span>
                                 </td>
+
                                 <td>
-                                    <a th:href="@{/admin/users/{id}(id=${user.id})}"
-                                       class="btn btn-sm btn-info">View</a>
+                                    <div class="btn-group" role="group">
+                                        <a th:href="@{/admin/users/{id}(id=${user.id})}"
+                                           class="btn btn-sm btn-info">View</a>
+
+                                        <!-- Show Make Admin button only for non-admin users -->
+                                        <form th:if="${!user.isAdmin()}"
+                                              th:action="@{/admin/users/{id}/make-admin(id=${user.id})}"
+                                              method="post" class="d-inline">
+                                            <button type="submit" class="btn btn-sm btn-success"
+                                                    onclick="return confirm('Make this user an admin?')">
+                                                Make Admin
+                                            </button>
+                                        </form>
+
+                                        <!-- Show Remove Admin button only for admin users who aren't the current user -->
+                                        <form th:if="${user.isAdmin() && !user.username.equals(#authentication.name)}"
+                                              th:action="@{/admin/users/{id}/remove-admin(id=${user.id})}"
+                                              method="post" class="d-inline">
+                                            <button type="submit" class="btn btn-sm btn-warning"
+                                                    onclick="return confirm('Remove admin role from this user?')">
+                                                Remove Admin
+                                            </button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                             </tbody>
                         </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="/admin/reports" class="btn btn-primary">Generate Reports</a>
+                        <a href="/admin/surgeons" class="btn btn-info">View All Surgeons</a>
+                        <!--This is for a later date. need to add ability to delete users from and reset passwords.-->
+                        <!--<a href="/admin/users-detail" class="btn btn-info">Manage Users</a>-->
                     </div>
                 </div>
             </div>

@@ -6,10 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title layout:title-pattern="$CONTENT_TITLE - Surgeon Preferences">Surgeon Preferences</title>
 
-    <!-- Bootstrap CSS -->
+
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- Custom CSS -->
+
     <style>
         .navbar-brand {
             font-weight: 600;
@@ -43,7 +43,7 @@
     </style>
 </head>
 <body>
-<!-- Navigation -->
+
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container">
         <a class="navbar-brand" href="/">Surgeon Preferences</a>
@@ -68,10 +68,10 @@
     </div>
 </nav>
 
-<!-- Main Content -->
+
 <main class="main-content">
     <div class="container">
-        <!-- Alert Messages -->
+
         <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
             <span th:text="${successMessage}"></span>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -81,14 +81,14 @@
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
 
-        <!-- Page Content -->
+
         <div layout:fragment="content">
-            <!-- Page content will be inserted here -->
+
         </div>
     </div>
 </main>
 
-<!-- Footer -->
+
 <footer class="footer">
     <div class="container">
         <div class="text-center">
@@ -97,12 +97,12 @@
     </div>
 </footer>
 
-<!-- Bootstrap Bundle with Popper -->
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
 
-<!-- Additional Scripts -->
+
 <th:block layout:fragment="scripts">
-    <!-- Page specific scripts will be inserted here -->
+
 </th:block>
 </body>
 </html>

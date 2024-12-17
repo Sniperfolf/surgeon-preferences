@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Edit Preference Card - Admin</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-4">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/admin/surgeons">All Surgeons</a></li>
+            <li class="breadcrumb-item"><a th:href="@{/admin/surgeons/{id}(id=${surgeonId})}">Surgeon Details</a></li>
+            <li class="breadcrumb-item active">Edit Preference Card</li>
+        </ol>
+    </nav>
+
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title mb-0">Edit Preference Card</h5>
+        </div>
+        <div class="card-body">
+            <form th:action="@{/admin/surgeons/{surgeonId}/cards/{cardId}(surgeonId=${surgeonId},cardId=${card.id})}"
+                  th:object="${card}" method="post">
+
+                <div class="mb-3">
+                    <label for="procedureName" class="form-label">Procedure Name*</label>
+                    <input type="text" class="form-control" id="procedureName"
+                           th:field="*{procedureName}" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="gloveSize" class="form-label">Glove Size</label>
+                    <input type="text" class="form-control" id="gloveSize"
+                           th:field="*{gloveSize}">
+                </div>
+
+                <div class="mb-3">
+                    <label for="instruments" class="form-label">Instruments</label>
+                    <textarea class="form-control" id="instruments" rows="4"
+                              th:field="*{instruments}"
+                              placeholder="List required instruments..."></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label for="sutures" class="form-label">Sutures</label>
+                    <textarea class="form-control" id="sutures" rows="4"
+                              th:field="*{sutures}"
+                              placeholder="List required sutures..."></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label for="notes" class="form-label">Notes</label>
+                    <textarea class="form-control" id="notes" rows="6"
+                              th:field="*{notes}"
+                              placeholder="Additional notes or special requirements..."></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <p class="text-muted">
+                        Last Updated: <span th:text="${#temporals.format(card.lastUpdated, 'yyyy-MM-dd HH:mm')}">2024-01-01</span>
+                        <br>
+                        Created By: <span th:text="${card.createdBy?.username}">username</span>
+                    </p>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                    <a th:href="@{/admin/surgeons/{id}(id=${surgeonId})}"
+                       class="btn btn-secondary">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

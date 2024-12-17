@@ -36,6 +36,11 @@ public class SurgeonService {
         }
         return surgeonRepository.findByCreatedBy(user);
     }
+    public int getTotalPreferenceCardsCount() {
+        return getAllSurgeons().stream()
+                .mapToInt(surgeon -> surgeon.getPreferenceCards().size())
+                .sum();
+    }
 
     public Surgeon getSurgeonById(Long id) {
         User currentUser = getCurrentUser();
@@ -67,7 +72,7 @@ public class SurgeonService {
     }
 
     public void deleteSurgeon(Long id) {
-        Surgeon surgeon = getSurgeonById(id); // This will check user access
+        Surgeon surgeon = getSurgeonById(id);
         if (!surgeon.getPreferenceCards().isEmpty()) {
             throw new RuntimeException("Cannot delete surgeon with existing preference cards");
         }
@@ -83,6 +88,6 @@ public class SurgeonService {
     }
 
     public void generateExcelReport(OutputStream outputStream) {
-
+    //Future me problem to deal with
     }
 }

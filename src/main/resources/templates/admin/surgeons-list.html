@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>All Surgeons - Admin View</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container mt-4">
+    <h2>All Surgeons</h2>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Specialty</th>
+                        <th>Preference Cards</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="surgeon : ${surgeons}">
+                        <td th:text="${surgeon.firstName + ' ' + surgeon.lastName}">John Doe</td>
+                        <td th:text="${surgeon.specialty}">Specialty</td>
+                        <td th:text="${surgeon.preferenceCards.size()}">0</td>
+                        <td>
+                            <a th:href="@{/admin/surgeons/{id}(id=${surgeon.id})}"
+                               class="btn btn-primary btn-sm">View Details</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
