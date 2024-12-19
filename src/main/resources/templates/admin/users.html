@@ -62,6 +62,21 @@
                                         </form>
                                     </div>
                                 </td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a th:href="@{/admin/users/{id}(id=${user.id})}"
+                                           class="btn btn-sm btn-info">View</a>
+
+                                        <!-- Don't show delete button for current admin, that would be dumb to delete myself from admin lol -->
+                                        <form th:if="${!user.username.equals(#authentication.name)}"
+                                              th:action="@{/admin/users/{id}/delete(id=${user.id})}"
+                                              method="post"
+                                              class="d-inline"
+                                              onsubmit="return confirmDelete(this);">
+                                            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                                        </form>
+                                    </div>
+                                </td>
                             </tr>
                             </tbody>
                         </table>
@@ -112,5 +127,11 @@
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+<script>
+    function confirmDelete(form) {
+        const username = form.closest('tr').querySelector('td:first-child').textContent;
+        return confirm(`Are you sure you want to delete user "${username}"? This action cannot be undone.`);
+    }
+</script>
 </body>
 </html>'

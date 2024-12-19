@@ -8,6 +8,7 @@ import com.iodine.surgeon_preferences.service.SurgeonService;
 import com.iodine.surgeon_preferences.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -103,6 +104,25 @@ public class AdminController {
         model.addAttribute("card", card);
         model.addAttribute("surgeonId", surgeonId);
         return "admin/edit-preference-card";
+    }
+    @PostMapping("/users/{id}/delete")
+    public String deleteUser(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            // Don't allow admin to delete themselves
+            String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+            User userToDelete = userService.getUserById(id);
+
+            if (userToDelete.getUsername().equals(currentUsername)) {
+                redirectAttributes.addFlashAttribute("errorMessage", "You cannot delete your own admin account");
+                return "redirect:/admin/users";
+            }
+
+            userService.deleteUser(id);
+            redirectAttributes.addFlashAttribute("successMessage", "User has been deleted successfully");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Error deleting user: " + e.getMessage());
+        }
+        return "redirect:/admin/users";
     }
 
 

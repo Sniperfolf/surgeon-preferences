@@ -39,7 +39,7 @@ public class SecurityConfig {
                 .formLogin(form -> form
                         .loginPage("/login")
                         .successHandler((request, response, authentication) -> {
-                            // Check if user has admin role
+                            // Check if user has admin role and redirect to appropriate page
                             if (authentication.getAuthorities().stream()
                                     .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
                                 response.sendRedirect("/admin/users");  // Admin dashboard

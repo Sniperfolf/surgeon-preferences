@@ -6,6 +6,8 @@ import com.iodine.surgeon_preferences.model.Role;
 import com.iodine.surgeon_preferences.repository.RoleRepository;
 import com.iodine.surgeon_preferences.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -63,6 +65,13 @@ public class UserService {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found: " + username));
     }
+    public void deleteUser(Long userId) {
+        User user = getUserById(userId);
+
+        // Remove user from all roles and delete their associated data TODO: need to add logic here before live actual for cards and surgeons. currently this is fine for testing and turnin.
+
+        userRepository.delete(user);
+    }
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
@@ -71,6 +80,17 @@ public class UserService {
     public User getUserById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+    }
+    public User getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new RuntimeException("No authenticated user found");
+        }
+
+        String username = authentication.getName();
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found: " + username));
     }
     public User registerNewUser(User user) {
         if (userRepository.findByUsername(user.getUsername()).isPresent()) {
