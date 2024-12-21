@@ -9,6 +9,11 @@ import java.util.Optional;
 public interface SurgeonRepository extends JpaRepository<Surgeon, Long> {
     List<Surgeon> findByCreatedBy(User user);
     Optional<Surgeon> findByIdAndCreatedBy(Long id, User user);
-    List<Surgeon> findByCreatedByAndLastNameContainingIgnoreCase(User user, String lastName);
-    List<Surgeon> findByLastNameContainingIgnoreCase(String lastName);
+
+    List<Surgeon> findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCaseOrSpecialtyContainingIgnoreCase(
+            String firstName, String lastName, String specialty);
+    List<Surgeon> findByCreatedByAndFirstNameContainingIgnoreCaseOrCreatedByAndLastNameContainingIgnoreCaseOrCreatedByAndSpecialtyContainingIgnoreCase(
+            User createdBy, String firstName,
+            User createdBySecond, String lastName,
+            User createdByThird, String specialty);
 }

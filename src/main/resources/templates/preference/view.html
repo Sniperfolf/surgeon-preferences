@@ -13,7 +13,7 @@
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a th:href="@{/surgeons}">Surgeons</a></li>
                     <li class="breadcrumb-item"><a th:href="@{/surgeons/{id}(id=${surgeon.id})}" th:text="${surgeon.firstName + ' ' + surgeon.lastName}">Surgeon Name</a></li>
-                    <li class="breadcrumb-item active">Preference Card</li>
+                    <li class="breadcrumb-item active" th:text="${preferenceCard.procedureName}">Preference Card</li>
                 </ol>
             </nav>
         </div>

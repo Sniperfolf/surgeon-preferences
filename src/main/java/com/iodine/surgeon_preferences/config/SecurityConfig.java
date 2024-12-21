@@ -1,5 +1,6 @@
 package com.iodine.surgeon_preferences.config;
 
+import com.iodine.surgeon_preferences.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +18,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import com.iodine.surgeon_preferences.config.PasswordEncoderConfig;
+import java.time.LocalDateTime;
 
 @Configuration
 @EnableWebSecurity
@@ -24,8 +27,19 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 public class SecurityConfig {
 
     @Autowired
-    private UserDetailsService userDetailsService;  // Changed to field injection
+    private UserDetailsService userDetailsService;
 
+    private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
+
+
+    @Autowired
+    public SecurityConfig(UserService userService, PasswordEncoder passwordEncoder) {
+        this.userService = userService;
+        this.passwordEncoder = passwordEncoder;
+    }
+
+//Here is my security config. This was the Hardest thing Ive had to research and look into. I honestly wish the security class would have gone over more of this.
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -39,12 +53,16 @@ public class SecurityConfig {
                 .formLogin(form -> form
                         .loginPage("/login")
                         .successHandler((request, response, authentication) -> {
-                            // Check if user has admin role and redirect to appropriate page
+                            String username = authentication.getName();
+                            com.iodine.surgeon_preferences.model.User user = userService.getUserByUsername(username);
+                            user.setLastLogin(LocalDateTime.now());
+                            userService.save(user);
                             if (authentication.getAuthorities().stream()
                                     .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN"))) {
-                                response.sendRedirect("/admin/users");  // Admin dashboard
+
+                                response.sendRedirect("/admin/users");  // Admin-dashboard TODO add full page redirect
                             } else {
-                                response.sendRedirect("/surgeons");     // Regular user page
+                                response.sendRedirect("/surgeons");     // Normal user screen
                             }
                         })
                         .permitAll()
@@ -63,7 +81,7 @@ public class SecurityConfig {
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
         authProvider.setUserDetailsService(userDetailsService);
-        authProvider.setPasswordEncoder(passwordEncoder());
+        authProvider.setPasswordEncoder(passwordEncoder);
         return authProvider;
     }
 
@@ -72,8 +90,4 @@ public class SecurityConfig {
         return authConfig.getAuthenticationManager();
     }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
 }

@@ -27,6 +27,7 @@
         <li class="nav-item">
           <a class="nav-link" href="/surgeons/form">Add Surgeon</a>
         </li>
+
       </ul>
       <form th:action="@{/logout}" method="post" class="d-flex">
         <button class="btn btn-outline-light" type="submit">Logout</button>
@@ -41,11 +42,14 @@
       <h2>Surgeons</h2>
     </div>
     <div class="col-md-6">
+<!--      // TODO NEed to update to search for FNL names of the surgeron-->
+
       <form class="d-flex" th:action="@{/surgeons}" method="get">
         <input class="form-control me-2" type="search"
-               placeholder="Search by last name" name="search"
+               placeholder="Search Surgeons or Specialty" name="search"
                th:value="${param.search}">
         <button class="btn btn-outline-primary" type="submit">Search</button>
+        <!--                        I have a few search functions spread through out this application. This one.-->
       </form>
     </div>
   </div>

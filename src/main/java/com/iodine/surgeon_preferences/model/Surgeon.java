@@ -13,15 +13,17 @@ public class Surgeon {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+//Good ol validation
     @NotBlank(message = "First name is required")
     @Column(nullable = false)
     private String firstName;
-
+//Some more validation
     @NotBlank(message = "Last name is required")
     @Column(nullable = false)
     private String lastName;
-
+//And some more its been such a long day. I hope these get read. Im So tired.
+    @NotBlank(message = "Specialty is required")
+    @Column(nullable = false)
     private String specialty;
 
     @OneToMany(mappedBy = "surgeon", cascade = CascadeType.ALL)

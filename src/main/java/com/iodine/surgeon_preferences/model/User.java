@@ -3,6 +3,7 @@ package com.iodine.surgeon_preferences.model;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Entity
@@ -11,10 +12,20 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private LocalDateTime lastLogin;
     private String firstName;
     private String lastName;
     @Column(unique = true, nullable = false)
     private String username;
+
+    public LocalDateTime getLastLogin() {
+        return lastLogin;
+    }
+
+    public void setLastLogin(LocalDateTime lastLogin) {
+        this.lastLogin = lastLogin;
+    }
+
 
     public Long getId() {
         return id;

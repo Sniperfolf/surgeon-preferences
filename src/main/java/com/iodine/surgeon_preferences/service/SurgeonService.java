@@ -42,6 +42,7 @@ public class SurgeonService {
                 .sum();
     }
 
+
     public Surgeon getSurgeonById(Long id) {
         User currentUser = getCurrentUser();
         if (currentUser.isAdmin()) {
@@ -56,12 +57,16 @@ public class SurgeonService {
         User currentUser = getCurrentUser();
         if (currentUser.isAdmin()) {
             if (searchTerm != null && !searchTerm.isEmpty()) {
-                return surgeonRepository.findByLastNameContainingIgnoreCase(searchTerm);
+                return surgeonRepository.findByFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCaseOrSpecialtyContainingIgnoreCase(
+                        searchTerm, searchTerm, searchTerm);
             }
             return surgeonRepository.findAll();
         }
         if (searchTerm != null && !searchTerm.isEmpty()) {
-            return surgeonRepository.findByCreatedByAndLastNameContainingIgnoreCase(currentUser, searchTerm);
+            return surgeonRepository.findByCreatedByAndFirstNameContainingIgnoreCaseOrCreatedByAndLastNameContainingIgnoreCaseOrCreatedByAndSpecialtyContainingIgnoreCase(
+                    currentUser, searchTerm,
+                    currentUser, searchTerm,
+                    currentUser, searchTerm);
         }
         return surgeonRepository.findByCreatedBy(currentUser);
     }

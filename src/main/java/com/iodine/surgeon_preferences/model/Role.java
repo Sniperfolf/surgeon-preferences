@@ -2,7 +2,7 @@ package com.iodine.surgeon_preferences.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
-
+//This contains all of my encapsulated data for the roles table in the database I have 4 models that are used in the same way currently. I still plan adding hospitals and groups at a much later date. This is my pet project that I have wanted to make just for this program.
 @Data
 @Entity
 @Table(name = "roles")

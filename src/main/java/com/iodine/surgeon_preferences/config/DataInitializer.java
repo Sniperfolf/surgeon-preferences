@@ -47,6 +47,8 @@ public class DataInitializer implements CommandLineRunner {
             // Create admin user for testing
             User admin = new User();
             admin.setUsername("Admin");
+            admin.setFirstName("Corey");
+            admin.setLastName("Carter");
             admin.setPassword(passwordEncoder.encode("*!T$*$6M5722%e"));
             admin.setEmail("ccar944@wgu.edu");
             admin.setRoles(new HashSet<>(Collections.singletonList(adminRole)));
@@ -55,13 +57,15 @@ public class DataInitializer implements CommandLineRunner {
             // Create non-admin user for testing
             User user = new User();
             user.setUsername("NotAdmin");
+            user.setFirstName("Not");
+            user.setLastName("Sure");
             user.setPassword(passwordEncoder.encode("*!T$*$6M5722%e"));
             user.setEmail("siriswolf@gmail.com");
             user.setRoles(new HashSet<>(Collections.singletonList(userRole)));
             userRepository.save(user);
         }
         if(surgeonRepository.count() == 0){
-            // Create a surgeon for testing of the app
+            // Create a surgeons for testing of the app
             Surgeon surgeon = new Surgeon();
             surgeon.setFirstName("John");
             surgeon.setLastName("Doe");
@@ -90,7 +94,22 @@ public class DataInitializer implements CommandLineRunner {
             surgeon5.setFirstName("Jack");
             surgeon5.setLastName("Jenkins");
             surgeon5.setSpecialty("General Surgery");
+            surgeon5.setCreatedBy(userRepository.findById(2L).get());
             surgeonRepository.save(surgeon5);
+
+            Surgeon surgeon6 = new Surgeon();
+            surgeon6.setFirstName("Maria");
+            surgeon6.setLastName("Garcia");
+            surgeon6.setSpecialty("Neurosurgery");
+            surgeon6.setCreatedBy(userRepository.findById(2L).get()); // Set NotAdmin as creator
+            surgeonRepository.save(surgeon6);
+
+            Surgeon surgeon7 = new Surgeon();
+            surgeon7.setFirstName("Robert");
+            surgeon7.setLastName("Chen");
+            surgeon7.setSpecialty("Vascular Surgery");
+            surgeon7.setCreatedBy(userRepository.findById(2L).get()); // Set NotAdmin as creator
+            surgeonRepository.save(surgeon7);
 
         }
         if (preferenceCardRepository.count() == 0){
@@ -144,6 +163,26 @@ public class DataInitializer implements CommandLineRunner {
             preferenceCard5.setSutures("General Surgery setup");
             preferenceCard.setNotes("Patient is allergic to latex");
             preferenceCardRepository.save(preferenceCard5);
+
+            PreferenceCard preferenceCard6 = new PreferenceCard();
+            preferenceCard6.setSurgeon(surgeonRepository.findById(6L).get());
+            preferenceCard6.setCreatedBy(userRepository.findById(2L).get());
+            preferenceCard6.setProcedureName("Brain Tumor Resection");
+            preferenceCard6.setInstruments("Microscope, Micro-instruments");
+            preferenceCard6.setGloveSize("7.0");
+            preferenceCard6.setSutures("Neurosurgery setup");
+            preferenceCard6.setNotes("Patient is allergic to latex");
+            preferenceCardRepository.save(preferenceCard6);
+
+            PreferenceCard preferenceCard7 = new PreferenceCard();
+            preferenceCard7.setSurgeon(surgeonRepository.findById(7L).get());
+            preferenceCard7.setCreatedBy(userRepository.findById(2L).get());
+            preferenceCard7.setProcedureName("Carotid Endarterectomy");
+            preferenceCard7.setInstruments("Vascular clamps, Doppler");
+            preferenceCard7.setGloveSize("8.5");
+            preferenceCard7.setSutures("Vascular Surgery setup");
+            preferenceCard7.setNotes("Patient is allergic to latex");
+            preferenceCardRepository.save(preferenceCard7);
         }
     }
 }

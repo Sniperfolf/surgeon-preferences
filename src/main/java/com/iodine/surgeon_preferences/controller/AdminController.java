@@ -36,8 +36,35 @@ public class AdminController {
         model.addAttribute("surgeonCount", surgeonService.getAllSurgeons().size());
         model.addAttribute("cardCount", surgeonService.getTotalPreferenceCardsCount());
 
-        return "admin/users";  // This will display your admin dashboard
+        return "admin/admin-dashboard";  // This will display  the admin dashboard
     }
+    @GetMapping("/reports/surgeons")
+    public String surgeonReport(@RequestParam(required = false) String search, Model model) {
+        List<Surgeon> surgeons;
+        if (search != null && !search.trim().isEmpty()) {
+            // Search across multiple fields
+            surgeons = surgeonService.searchSurgeons(search.trim());
+        } else {
+            surgeons = surgeonService.getAllSurgeons();
+        }
+        model.addAttribute("surgeons", surgeons);
+        model.addAttribute("search", search);
+        return "admin/surgeon-report";
+    }
+
+    @GetMapping("/reports/users")
+    public String userReport(@RequestParam(required = false) String search, Model model) {
+        List<User> users;
+        if (search != null && !search.trim().isEmpty()) {
+            users = userService.searchUsers(search.trim());
+        } else {
+            users = userService.getAllUsers();
+        }
+        model.addAttribute("users", users);
+        model.addAttribute("search", search);
+        return "admin/user-report";
+    }
+
     @PostMapping("/users/{id}/make-admin")
     public String makeUserAdmin(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
@@ -58,6 +85,18 @@ public class AdminController {
             redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
         }
         return "redirect:/admin/users";
+    }
+    @GetMapping("/users-list")
+    public String listUsersDetail(@RequestParam(required = false) String search, Model model) {
+        List<User> users;
+        if (search != null && !search.trim().isEmpty()) {
+            users = userService.searchUsers(search.trim());
+        } else {
+            users = userService.getAllUsers();
+        }
+        model.addAttribute("users", users);
+        model.addAttribute("search", search);
+        return "admin/users-list";
     }
 
     @GetMapping("/users/{id}")
@@ -82,9 +121,15 @@ public class AdminController {
     }
 
     @GetMapping("/surgeons")
-    public String listAllSurgeons(Model model) {
-        List<Surgeon> surgeons = surgeonService.getAllSurgeons();
+    public String listAllSurgeons(@RequestParam(required = false) String search, Model model) {
+        List<Surgeon> surgeons;
+        if (search != null && !search.trim().isEmpty()) {
+            surgeons = surgeonService.searchSurgeons(search.trim());
+        } else {
+            surgeons = surgeonService.getAllSurgeons();
+        }
         model.addAttribute("surgeons", surgeons);
+        model.addAttribute("search", search);
         return "admin/surgeons-list";
     }
 
@@ -108,7 +153,7 @@ public class AdminController {
     @PostMapping("/users/{id}/delete")
     public String deleteUser(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
-            // Don't allow admin to delete themselves
+            // Don't allow admin to delete themselves though this would be funny no admins at all pure anarchy
             String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
             User userToDelete = userService.getUserById(id);
 

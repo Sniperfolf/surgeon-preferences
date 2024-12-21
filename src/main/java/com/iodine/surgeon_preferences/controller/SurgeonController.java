@@ -56,7 +56,7 @@ public class SurgeonController {
     public String showEditForm(@PathVariable Long id, Model model) {
         Surgeon surgeon = surgeonService.getSurgeonById(id);
         model.addAttribute("surgeon", surgeon);
-        return "surgeon/form"; // Using the same form for create and edit
+        return "surgeon/form"; // Using the same form for create and edit but plan for separate ones in the future.
     }
 
     @GetMapping("/{id}")

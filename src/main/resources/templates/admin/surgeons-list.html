@@ -1,14 +1,100 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <title>All Surgeons - Admin View</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        @media print {
+            .navbar,
+            .btn,
+            .btn-group,
+            form,
+            .input-group,
+            th:last-child,
+            td:last-child {
+                display: none;
+            }
+
+            @page {
+                size: landscape;
+                margin: 10mm;
+            }
+
+            .container {
+                max-width: 100% !important;
+                width: 100% !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+
+            .table {
+                width: 100% !important;
+            }
+
+            .card {
+                border: none !important;
+                box-shadow: none !important;
+            }
+        }
+    </style>
 </head>
 <body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" href="/">Surgeon Preferences</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/surgeons">Surgeons</a>
+                </li>
+                <li sec:authorize="hasRole('ADMIN')">
+                    <a th:href="@{/admin/users}" class="nav-link">Admin Dashboard</a>
+                </li>
+            </ul>
+            <form th:action="@{/logout}" method="post" class="d-flex">
+                <button class="btn btn-outline-light" type="submit">Logout</button>
+            </form>
+        </div>
+    </div>
+</nav>
+
 <div class="container mt-4">
-    <h2>All Surgeons</h2>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>All Surgeons</h2>
+        <div class="d-flex gap-2">
+            <button onclick="window.print()" class="btn btn-primary me-2">
+                <i class="bi bi-printer"></i> Print
+            </button>
+            <form class="d-flex" method="get" th:action="@{/admin/surgeons}">
+                <div class="input-group">
+                    <input type="text"
+                           class="form-control"
+                           placeholder="Search Surgeons or Specialty"
+                           name="search"
+                           th:value="${param.search}">
+                    <button class="btn btn-primary" type="submit">
+                        <i class="bi bi-search"></i> Search
+                        <!--                        I have a few search functions spread through out this application. This one.-->
+                    </button>
+                </div>
+            </form>
+            <a th:href="@{/admin/surgeons}"
+               class="btn btn-secondary"
+               th:if="${param.search != null && param.search != ''}">
+                Clear
+            </a>
+        </div>
+    </div>
 
     <div class="card">
+        <div class="card-header">
+            <h5 class="card-title mb-0">Surgeons List</h5>
+        </div>
         <div class="card-body">
             <div class="table-responsive">
                 <table class="table table-striped">
@@ -26,8 +112,10 @@
                         <td th:text="${surgeon.specialty}">Specialty</td>
                         <td th:text="${surgeon.preferenceCards.size()}">0</td>
                         <td>
-                            <a th:href="@{/admin/surgeons/{id}(id=${surgeon.id})}"
-                               class="btn btn-primary btn-sm">View Details</a>
+                            <div class="btn-group" role="group">
+                                <a th:href="@{/admin/surgeons/{id}(id=${surgeon.id})}"
+                                   class="btn btn-sm btn-info">View Details</a>
+                            </div>
                         </td>
                     </tr>
                     </tbody>
@@ -35,6 +123,11 @@
             </div>
         </div>
     </div>
+    <div class="mt-4">
+        <a th:href="@{/admin/users}" class="btn btn-secondary">Back to Dashboard</a>
+    </div>
 </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

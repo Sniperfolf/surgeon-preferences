@@ -42,6 +42,9 @@ public class UserService {
 
         return userRepository.save(user);
     }
+    public User save(User user) {
+        return userRepository.save(user);
+    }
     public void makeUserAdmin(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -72,6 +75,11 @@ public class UserService {
 
         userRepository.delete(user);
     }
+    public List<User> searchUsers(String searchTerm) {
+        return userRepository.findByUsernameContainingIgnoreCaseOrEmailContainingIgnoreCaseOrFirstNameContainingIgnoreCaseOrLastNameContainingIgnoreCase(
+                searchTerm, searchTerm, searchTerm, searchTerm
+        );
+    }
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
@@ -92,6 +100,8 @@ public class UserService {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found: " + username));
     }
+
+
     public User registerNewUser(User user) {
         if (userRepository.findByUsername(user.getUsername()).isPresent()) {
             throw new RuntimeException("Username already exists");
@@ -107,4 +117,5 @@ public class UserService {
 
         return userRepository.save(user);
     }
+
 }

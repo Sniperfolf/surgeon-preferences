@@ -8,11 +8,30 @@
       .no-print {
         display: none;
       }
-      .page-break {
-        page-break-after: always;
+
+      @page {
+        size: landscape;
+        margin: 10mm;
       }
+
+      .container {
+        max-width: 100% !important;
+        width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+
+      .table {
+        width: 100% !important;
+        margin-top: 1rem !important;
+      }
+
       body {
-        padding: 20px;
+        padding: 0 !important;
+      }
+
+      h2 {
+        margin-bottom: 0.5rem !important;
       }
     }
   </style>
@@ -22,6 +41,19 @@
   <div class="no-print mb-3">
     <button onclick="window.print()" class="btn btn-primary">Print Report</button>
     <a href="/admin/reports" class="btn btn-secondary">Back to Reports</a>
+  </div>
+  <div class="mb-3 no-print">
+    <form method="get" class="d-flex">
+      <input type="text"
+             name="search"
+             class="form-control me-2"
+             placeholder="Search surgeons or specialties"
+             th:value="${search}">
+      <button type="submit" class="btn btn-outline-primary">Search</button>
+      <a th:href="@{/admin/reports/surgeons}"
+         class="btn btn-outline-secondary ms-2"
+         th:if="${search != null}">Clear</a>
+    </form>
   </div>
 
   <h2>Surgeon Report</h2>
