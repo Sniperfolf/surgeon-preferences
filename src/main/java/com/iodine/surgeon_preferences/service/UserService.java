@@ -102,20 +102,5 @@ public class UserService {
     }
 
 
-    public User registerNewUser(User user) {
-        if (userRepository.findByUsername(user.getUsername()).isPresent()) {
-            throw new RuntimeException("Username already exists");
-        }
-
-
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-
-
-        Role userRole = roleRepository.findByName("ROLE_USER")
-                .orElseThrow(() -> new RuntimeException("Default role not found"));
-        user.setRoles(new HashSet<>(Collections.singletonList(userRole)));
-
-        return userRepository.save(user);
-    }
 
 }
