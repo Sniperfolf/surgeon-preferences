@@ -1,4 +1,4 @@
-2024-12-20 20:57:24.228532-07:00 database: flush
+2024-12-20 21:00:34.953248-07:00 database: flush
 org.h2.message.DbException: General error: "org.h2.mvstore.MVStoreException: The file is locked: C:/Users/Corey/Desktop/Spring Projects/surgeon-preferences/data/surgeondb.mv.db [2.3.232/7]" [50000-232]
 	at org.h2.message.DbException.get(DbException.java:212)
 	at org.h2.message.DbException.convert(DbException.java:407)
@@ -151,7 +151,7 @@ Caused by: org.h2.mvstore.MVStoreException: The file is locked: C:/Users/Corey/D
 	at org.h2.mvstore.SingleFileStore.open(SingleFileStore.java:81)
 	at org.h2.mvstore.MVStore.<init>(MVStore.java:286)
 	... 134 more
-2024-12-20 20:57:26.081500-07:00 database: flush
+2024-12-20 21:00:36.735569-07:00 database: flush
 org.h2.message.DbException: General error: "org.h2.mvstore.MVStoreException: The file is locked: C:/Users/Corey/Desktop/Spring Projects/surgeon-preferences/data/surgeondb.mv.db [2.3.232/7]" [50000-232]
 	at org.h2.message.DbException.get(DbException.java:212)
 	at org.h2.message.DbException.convert(DbException.java:407)
