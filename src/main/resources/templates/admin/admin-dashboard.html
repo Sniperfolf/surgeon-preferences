@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Admin Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" href="/">Surgeon Preferences</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/surgeons">Surgeons</a>
+                </li>
+            </ul>
+            <form th:action="@{/logout}" method="post" class="d-flex">
+                <button class="btn btn-outline-light" type="submit">Logout</button>
+            </form>
+        </div>
+    </div>
+</nav>
+<div class="container mt-4">
+    <h2>Admin Dashboard</h2>
+
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Users Overview</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>Username</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="user : ${users}">
+                                <td th:text="${user.username}">username</td>
+                                <td th:text="${user.email}">email</td>
+                                <td>
+                                            <span th:each="role : ${user.roles}"
+                                                  th:text="${role.name}"
+                                                  class="badge bg-primary me-1">
+                                            </span>
+                                </td>
+
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <a th:href="@{/admin/users/{id}(id=${user.id})}"
+                                           class="btn btn-sm btn-info">View</a>
+
+                                        <!-- Show Make Admin button only for non-admin users dont want to delete me!! -->
+                                        <form th:if="${!user.isAdmin()}"
+                                              th:action="@{/admin/users/{id}/make-admin(id=${user.id})}"
+                                              method="post" class="d-inline">
+                                            <button type="submit" class="btn btn-sm btn-success"
+                                                    onclick="return confirm('Make this user an admin?')">
+                                                Make Admin
+                                            </button>
+                                        </form>
+
+                                        <!-- Show Remove Admin button only for admin users who aren't the current user -->
+                                        <form th:if="${user.isAdmin() && !user.username.equals(#authentication.name)}"
+                                              th:action="@{/admin/users/{id}/remove-admin(id=${user.id})}"
+                                              method="post" class="d-inline">
+                                            <button type="submit" class="btn btn-sm btn-warning"
+                                                    onclick="return confirm('Remove admin role from this user?')">
+                                                Remove Admin
+                                            </button>
+                                        </form>
+                                        <!-- Don't show delete button for current admin, that would be dumb to delete myself from admin lol -->
+                                        <form th:if="${!user.username.equals(#authentication.name)}"
+                                              th:action="@{/admin/users/{id}/delete(id=${user.id})}"
+                                              method="post"
+                                              class="d-inline"
+                                              onsubmit="return confirmDelete(this);">
+                                            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Generate Reports</h5>
+                </div>
+                <div class="card-body">
+                    <div class="d-grid gap-2">
+                        <a href="/admin/reports" class="btn btn-primary">Full Reports</a>
+                        <a href="/admin/surgeons" class="btn btn-info">Surgeon Reports</a>
+                        <a href="/admin/users-list" class="btn btn-info">User Reports</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">System Statistics</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Total Users
+                            <span class="badge bg-primary rounded-pill" th:text="${userCount}">0</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Total Surgeons
+                            <span class="badge bg-primary rounded-pill" th:text="${surgeonCount}">0</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Total Preference Cards
+                            <span class="badge bg-primary rounded-pill" th:text="${cardCount}">0</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+<script>
+    function confirmDelete(form) {
+        const username = form.closest('tr').querySelector('td:first-child').textContent;
+        return confirm(`Are you sure you want to delete user "${username}"? This action cannot be undone.`);
+    }
+</script>
+</body>
+</html>'
